@@ -5,7 +5,7 @@ import User from '../models/User';
 
 const isDummyKey = !env.STRIPE_SECRET_KEY;
 
-const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+const stripe = new Stripe(env.STRIPE_SECRET_KEY || 'sk_test_dummy_key_for_init', {
   // Let the SDK automatically select the correct default stable API version
 } as any);
 

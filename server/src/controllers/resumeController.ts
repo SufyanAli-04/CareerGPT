@@ -218,7 +218,7 @@ export const uploadResume = async (req: AuthRequest, res: Response): Promise<voi
       } catch (parseErr: any) {
         console.error(`Attempt ${attempt} failed to parse AI JSON. Retrying...`);
         if (attempt === 3) {
-          require('fs').writeFileSync('debug.log', 'JSON Parse Error. Raw string was:\n' + aiRaw + '\n\nError:\n' + String(parseErr));
+          console.error('JSON Parse Error. Raw string was:\n', aiRaw, '\nError:', parseErr);
           res.status(500).json({ message: 'AI returned invalid JSON after 3 attempts. Please try again.' });
           return;
         }
@@ -264,7 +264,6 @@ export const uploadResume = async (req: AuthRequest, res: Response): Promise<voi
     res.status(201).json({ success: true, resume });
   } catch (error: any) {
     console.error('Resume upload error:', error);
-    require('fs').writeFileSync('debug.log', String(error?.stack || error));
     res.status(500).json({ message: 'Resume analysis failed', error: String(error) });
   }
 };
