@@ -17,10 +17,17 @@ import stripeRoutes from './routes/stripeRoutes';
 import adminRoutes from './routes/adminRoutes';
 import bookingRoutes from './routes/bookingRoutes';
 
-// Connect Database
-connectDB();
-
 const app = express();
+
+// Ensure DB connection middleware for serverless
+app.use(async (_req, _res, next) => {
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error('DB middleware error:', err);
+  }
+  next();
+});
 
 // ─── Middleware ────────────────────────────────────────────────────────────────
 const allowedOrigins = env.CLIENT_URL
@@ -30,7 +37,6 @@ const allowedOrigins = env.CLIENT_URL
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, Postman, server-to-server)
       if (!origin) return callback(null, true);
       const cleanOrigin = origin.replace(/\/$/, '');
       if (
@@ -49,6 +55,11 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 if (env.NODE_ENV === 'development') app.use(morgan('dev'));
 
+// ─── Root Route ───────────────────────────────────────────────────────────────
+app.get('/', (_req, res) => {
+  res.json({ status: 'OK', message: 'CareerGPT API is live and running 🚀' });
+});
+
 // ─── Routes ───────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/resume', resumeRoutes);
@@ -64,6 +75,11 @@ app.use('/api/bookings', bookingRoutes);
 // ─── Health Check ─────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'OK', message: 'CareerGPT API is running 🚀' });
+});
+
+// ─── 404 Handler ──────────────────────────────────────────────────────────────
+app.use((_req, res) => {
+  res.status(404).json({ success: false, message: 'Route not found' });
 });
 
 // ─── Error Handler (must be last) ─────────────────────────────────────────────
