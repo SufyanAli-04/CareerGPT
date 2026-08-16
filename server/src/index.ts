@@ -20,13 +20,20 @@ import bookingRoutes from './routes/bookingRoutes';
 const app = express();
 
 // Ensure DB connection middleware for serverless
-app.use(async (_req, _res, next) => {
+app.use(async (req, res, next) => {
+  if (req.path === '/' || req.path === '/api/health') {
+    return next();
+  }
   try {
     await connectDB();
-  } catch (err) {
-    console.error('DB middleware error:', err);
+    next();
+  } catch (err: any) {
+    console.error('DB middleware error:', err.message);
+    res.status(500).json({
+      success: false,
+      message: err.message || 'Database connection error. Please verify MONGO_URI and MongoDB Atlas IP access rules.',
+    });
   }
-  next();
 });
 
 // ─── Middleware ────────────────────────────────────────────────────────────────
@@ -73,8 +80,15 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/bookings', bookingRoutes);
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'OK', message: 'CareerGPT API is running 🚀' });
+app.get('/api/health', async (_req, res) => {
+  let dbStatus = 'Disconnected';
+  try {
+    await connectDB();
+    dbStatus = 'Connected';
+  } catch (e: any) {
+    dbStatus = `Connection Error: ${e.message}`;
+  }
+  res.json({ status: 'OK', message: 'CareerGPT API is running 🚀', database: dbStatus });
 });
 
 // ─── 404 Handler ──────────────────────────────────────────────────────────────
