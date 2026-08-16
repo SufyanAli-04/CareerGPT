@@ -1,0 +1,51 @@
+{
+  "name": "careergpt-server",
+  "version": "1.0.0",
+  "description": "CareerGPT Backend - AI Career Platform",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "nodemon --watch src --ext ts --exec ts-node src/index.ts",
+    "build": "tsc",
+    "test:unit": "ts-node ./tests/run-tests.ts",
+    "start": "node dist/index.js"
+  },
+  "keywords": [
+    "careergpt",
+    "ai",
+    "career",
+    "mern"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/mongoose": "^5.11.96",
+    "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^25.6.0",
+    "@types/pdf-parse": "^1.1.5",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-async-handler": "^1.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "mammoth": "^1.12.0",
+    "mongoose": "^9.5.0",
+    "morgan": "^1.10.1",
+    "multer": "^2.1.1",
+    "node-fetch": "^2.7.0",
+    "pdf-parse": "^1.1.1",
+    "resend": "^6.12.4",
+    "stripe": "^22.1.1"
+  }
+}
