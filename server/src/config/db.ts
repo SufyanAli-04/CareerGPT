@@ -1,27 +1,23 @@
 import mongoose from 'mongoose';
 import { env } from './env';
 
+let isConnected = false;
+
 const connectDB = async (): Promise<void> => {
+  if (isConnected || mongoose.connection.readyState >= 1) {
+    isConnected = true;
+    return;
+  }
+
   try {
     const conn = await mongoose.connect(env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
     });
+    isConnected = true;
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
   } catch (error: any) {
     console.error('MongoDB connection error:', error.message);
-    console.error('Attempting to connect to:', env.MONGO_URI);
-    console.error('Full error:', error);
-
-    // Try to start MongoDB from the local data folder
-    console.log('\n💡 Make sure MongoDB is running. You can:');
-    console.log('   1. Start MongoDB from command line: mongod --dbpath="mongodb_data"');
-    console.log('   2. Or verify MongoDB is running on port 27017\n');
-
-    setTimeout(() => {
-      console.log('🔄 Retrying database connection...');
-      connectDB();
-    }, 5000);
   }
 };
 

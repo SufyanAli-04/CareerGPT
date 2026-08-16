@@ -70,8 +70,10 @@ app.get('/api/health', (_req, res) => {
 app.use(errorHandler);
 
 // ─── Start Server ─────────────────────────────────────────────────────────────
-app.listen(env.PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${env.PORT} in ${env.NODE_ENV} mode`);
-});
+if (!process.env.VERCEL) {
+  app.listen(env.PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${env.PORT} in ${env.NODE_ENV} mode`);
+  });
+}
 
 export default app;
